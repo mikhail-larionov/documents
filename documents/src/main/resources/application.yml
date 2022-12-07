@@ -1,0 +1,17 @@
+spring:
+  kafka:
+    bootstrap-servers: 174.22.22.55:9092
+kafka:
+  topic: user
+  bootstrapAddress: localhost:29092
+  groupId: localhost:29092
+amazon:
+  dynamodb:
+    endpoint: http://localhost:9000
+    amazonAWSAccessKey: cifra
+    secretkey: qAzXsw1!
+  aws:
+    region: eu-west-1
+minio:
+  access-key: admin
+  secret-key: admin_password
