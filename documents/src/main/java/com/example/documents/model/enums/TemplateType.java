@@ -1,6 +1,5 @@
 package com.example.documents.model.enums;
 
-public enum Sex {
-    MEN,
-    FEMALE
+public enum TemplateType {
+    ID
 }

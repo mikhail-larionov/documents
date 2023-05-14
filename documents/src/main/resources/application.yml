@@ -4,7 +4,15 @@ spring:
 kafka:
   topic: user
   bootstrapAddress: localhost:29092
-  groupId: localhost:29092
+  bootstrap:
+    servers: localhost:29092
+  groupId: localhost:9092
+#kafka:
+#  topic: "rbp.event.audit.pub"
+#  bootstrap:
+#    servers: localhost:9092
+#  security:
+#  protocol: "SASL_PLAINTEXT"
 amazon:
   dynamodb:
     endpoint: http://localhost:9000
@@ -15,3 +23,14 @@ amazon:
 minio:
   access-key: admin
   secret-key: admin_password
+  bucket: documents
+  template-bucket: template
+management:
+  endpoints.web.exposure.include: '*'
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    distribution:
+      percentiles-histogram:
+        "[http.server.requests]": true

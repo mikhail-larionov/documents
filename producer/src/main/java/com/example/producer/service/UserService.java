@@ -1,8 +1,10 @@
 package com.example.producer.service;
 
 import com.example.producer.kafka.Sender;
-import com.example.producer.model.request.UserCreateRequest;
+import com.example.producer.model.request.DocumentCreateRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,7 +15,10 @@ public class UserService {
         this.sender = sender;
     }
 
-    public void createUser(UserCreateRequest userCreateRequest) throws JsonProcessingException {
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
+
+    public void createUser(DocumentCreateRequest userCreateRequest) throws JsonProcessingException {
+        log.info("Sending message" + userCreateRequest);
         sender.sendMessage(userCreateRequest);
     }
 }

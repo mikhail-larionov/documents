@@ -1,6 +1,6 @@
 package com.example.producer.model.enums;
 
-public enum Sex {
-    MEN,
+public enum Gender {
+    MALE,
     FEMALE
 }

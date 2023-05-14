@@ -13,11 +13,11 @@ public class MinioConfiguration {
     private String secretKey;
 
     @Bean
-    public MinioClient minioClient(){
+    public MinioClient minioClient() {
         return MinioClient.builder()
-                        .endpoint("localhost", 9000, false)
-                        .credentials(accessKey, secretKey)
-                        .build();
+                .endpoint("localhost", 9900, false)
+                .credentials(accessKey, secretKey)
+                .build();
 
     }
 }

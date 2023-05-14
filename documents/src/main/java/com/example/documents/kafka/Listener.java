@@ -1,10 +1,10 @@
 package com.example.documents.kafka;
 
-import com.example.documents.model.entity.Document;
+import com.example.documents.model.dto.requests.DocumentCreateRequest;
 import com.example.documents.service.DocumentService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.minio.errors.*;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
@@ -24,9 +24,9 @@ public class Listener {
     }
 
     @KafkaListener(topics = "user", groupId = "document", containerFactory = "kafkaListenerContainerFactory")
-    public void listen(String message) throws IOException, ServerException, InsufficientDataException, ErrorResponseException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
+    public void listen(String message) throws IOException, ServerException, InsufficientDataException, ErrorResponseException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException, InvalidFormatException {
         System.out.println("Received Message in group foo: " + message);
-        Document document = objectMapper.readValue(message, Document.class);
+        DocumentCreateRequest document = objectMapper.readValue(message, DocumentCreateRequest.class);
         documentService.saveDocument(document);
     }
 }

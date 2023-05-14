@@ -1,4 +1,9 @@
 version: '3'
+
+networks:
+  net:
+    external: true
+
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -22,16 +27,65 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
-  s3:
+  #  kafka:
+  #   image: confluentinc/cp-kafka:latest
+  #      container_name: kafka
+  #      restart: "no"
+  #      networks:
+  #        - kafka-net
+  #      ports:
+  #        - "9092:9092"
+  #      environment:
+  #        KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: DOCKER_INTERNAL:PLAINTEXT,DOCKER_EXTERNAL:PLAINTEXT
+  #        KAFKA_LISTENERS: DOCKER_INTERNAL://:29092,DOCKER_EXTERNAL://:9092
+  #        KAFKA_ADVERTISED_LISTENERS: DOCKER_INTERNAL://kafka:29092,DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092
+  #        KAFKA_INTER_BROKER_LISTENER_NAME: DOCKER_INTERNAL
+  #        KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+  #        KAFKA_BROKER_ID: 1
+  #        KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+  #      depends_on:
+  #        - zookeeper
+
+  data:
     image: minio/minio
     ports:
-      - "9100:9000"
+      - '9900:9000'
+      - '9901:9001'
     volumes:
-      - ./storage/minio:/data
+      - ~/minio/data:/data
+    container_name: minio
     environment:
-#      MINIO_ROOT_USER: admin
-#      MINIO_ROOT_PASSWORD: admin
-#      MINIO_PROMETHEUS_AUTH_TYPE: public
-      MINIO_ACCESS_KEY: minio_access_key
-      MINIO_SECRET_KEY: minio_secret_key
-    command: server /data --console-address ":9100"
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=admin_password
+    command: [ "server", "--console-address", ":9001", "/data" ]
+
+  dynamodb:
+    image: amazon/dynamodb-local
+    container_name: dynamodb
+    hostname: dynamodb
+    restart: always
+    volumes:
+      - ./my-dynamodb-data:/home/dynamodblocal/data
+    ports:
+      - 9000:8000
+    environment:
+      AWS_ACCESS_KEY_ID: cifra
+      AWS_SECRET_ACCESS_KEY: qAzXsw1!
+      AWS_REGION: eu-west-1
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus:/prometheus
